@@ -1,4 +1,6 @@
 import React, {
+  useState,
+  useCallback,
   useEffect,
   useRef,
   useImperativeHandle,
@@ -31,6 +33,20 @@ const Input: React.RefForwardingComponent<InputRef, InputProps> = (
   const { registerField, defaultValue = '', fieldName, error } = useField(name);
   const inputValueRef = useRef<InputValueReference>({ value: defaultValue });
 
+  const [isFocused, setIsFocused] = useState(false);
+  const [isFilled, setIsFilled] = useState(false);
+
+  const handleInputFocus = useCallback(() => {
+    setIsFocused(true);
+    console.log('focused');
+  }, []);
+
+  const handleInputBlur = useCallback(() => {
+    setIsFocused(false);
+    console.log('unfocused');
+    setIsFilled(!!inputValueRef.current.value);
+  }, []);
+
   // passa props para o componente pai
   useImperativeHandle(ref, () => ({
     focus() {
@@ -55,13 +71,19 @@ const Input: React.RefForwardingComponent<InputRef, InputProps> = (
   }, [fieldName, registerField]);
 
   return (
-    <Container>
-      <Icon name={icon} size={20} color="#666360" />
+    <Container isFocused={isFocused}>
+      <Icon
+        name={icon}
+        size={20}
+        color={isFocused || isFilled ? '#ff9900' : '#666360'}
+      />
       <TextInput
         ref={inputElementRef}
         placeholderTextColor="#666360"
         keyboardAppearance="dark"
         defaultValue={defaultValue}
+        onFocus={handleInputFocus}
+        onBlur={handleInputBlur}
         onChangeText={(value) => {
           inputValueRef.current.value = value;
         }}
