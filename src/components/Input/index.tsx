@@ -47,7 +47,7 @@ const Input: React.RefForwardingComponent<InputRef, InputProps> = (
     setIsFilled(!!inputValueRef.current.value);
   }, []);
 
-  // passa props para o componente pai
+  // permite acesso do componente pai
   useImperativeHandle(ref, () => ({
     focus() {
       inputElementRef.current.focus();
@@ -71,7 +71,7 @@ const Input: React.RefForwardingComponent<InputRef, InputProps> = (
   }, [fieldName, registerField]);
 
   return (
-    <Container isFocused={isFocused}>
+    <Container isFocused={isFocused} isErrored={!!error}>
       <Icon
         name={icon}
         size={20}
